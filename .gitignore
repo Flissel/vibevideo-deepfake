@@ -1,0 +1,66 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+venv/
+
+# Environment / Secrets
+.env
+.env.*
+
+# Media files (large, generated)
+*.mp4
+*.m4a
+*.wav
+*.webm
+*.mp3
+*.png
+*.jpg
+*.jpeg
+*.zip
+*.tar.gz
+
+# Vendor repos (external dependencies)
+wav2lip/
+musetalk/
+CodeFormer/
+gfpgan/
+vendor/
+
+# Generated outputs
+output/
+lip_sync/
+sweep_*/
+test_*/
+deep_analysis/
+mouth_analysis/
+wave_analysis/
+
+# Data
+data/
+
+# TTS generated audio
+tts/
+
+# Temp files
+_tmp_*/
+_*.py
+_*.wav
+
+# IDE / tools
+.vscode/
+.claude/
+.playwright-mcp/
+
+# OS
+*.stackdump
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# Model files
+*.task
+*.pth
+*.onnx
+*.pt

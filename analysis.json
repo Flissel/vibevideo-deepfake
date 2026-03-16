@@ -1,0 +1,268 @@
+[
+  {
+    "name": "Lisa",
+    "file": "Lisa.mp4",
+    "duration": 20.41,
+    "resolution": [
+      478,
+      850
+    ],
+    "fps": 30.0,
+    "has_audio": true,
+    "trim_start": 0.0,
+    "trim_end": 20.41,
+    "trimmed_duration": 20.41,
+    "clip_start": 0.0,
+    "clip_end": 12.0,
+    "transcript": "Hi, I'm Lisa and my role at WiteMind is FX Communication and Community. I facilitate the understanding of advanced technology, built transparent communication channels and contribute to responsible AI guidelines that connect the product with its user and society.",
+    "segments": [
+      {
+        "start": 0.0,
+        "end": 6.0,
+        "text": "Hi, I'm Lisa and my role at WiteMind is FX Communication and Community."
+      },
+      {
+        "start": 6.0,
+        "end": 13.0,
+        "text": "I facilitate the understanding of advanced technology, built transparent communication channels"
+      },
+      {
+        "start": 13.0,
+        "end": 20.0,
+        "text": "and contribute to responsible AI guidelines that connect the product with its user and society."
+      }
+    ],
+    "role": "Social Media & Ethics",
+    "voice_id": "LGREGZXOoXuEeCloHbno",
+    "voice_name": "Lisa",
+    "lipsync_params": {
+      "temporal_buffer": 7,
+      "codeformer_fidelity": 0.6,
+      "unsharp_strength": 0.4,
+      "unsharp_sigma": 2.0,
+      "expand_ratio": 0.04,
+      "blur_ratio": 0.07
+    }
+  },
+  {
+    "name": "Moritz",
+    "file": "Moritz.mp4",
+    "duration": 19.46,
+    "resolution": [
+      480,
+      816
+    ],
+    "fps": 30.05,
+    "has_audio": true,
+    "trim_start": 0.0,
+    "trim_end": 19.46,
+    "trimmed_duration": 19.46,
+    "clip_start": 0.0,
+    "clip_end": 10.0,
+    "transcript": "Hello, this is Moritz Bauman and I'm a software engineer and in the past seven years I have built software for automotive companies. My passion is taking a product from the initial idea to the finished solution and shaping the bigger picture. Now I'm excited to bring my experience to Weibmahn in the role of the lead engineer.",
+    "segments": [
+      {
+        "start": 0.0,
+        "end": 4.4,
+        "text": "Hello, this is Moritz Bauman and I'm a software engineer and in the past seven years"
+      },
+      {
+        "start": 4.4,
+        "end": 7.12,
+        "text": "I have built software for automotive companies."
+      },
+      {
+        "start": 7.46,
+        "end": 11.92,
+        "text": "My passion is taking a product from the initial idea to the finished solution and"
+      },
+      {
+        "start": 12.36,
+        "end": 14.12,
+        "text": "shaping the bigger picture."
+      },
+      {
+        "start": 14.12,
+        "end": 18.84,
+        "text": "Now I'm excited to bring my experience to Weibmahn in the role of the lead engineer."
+      }
+    ],
+    "role": "Lead Engineer",
+    "voice_id": "ptrGjWJ7p3wm025ZbHoF"
+  },
+  {
+    "name": "Steffen",
+    "file": "steffen.mp4",
+    "duration": 9.43,
+    "resolution": [
+      474,
+      850
+    ],
+    "fps": 29.91,
+    "has_audio": true,
+    "trim_start": 0.0,
+    "trim_end": 9.43,
+    "trimmed_duration": 9.43,
+    "clip_start": 0.0,
+    "clip_end": 9.43,
+    "skip_lipsync": true,
+    "transcript": "Okay, hey, my name is Stefan and I'm part of VibeMind and my tendencies are always going building systems and reaching out for new customers. So I own the Ops and Sales space with old VibeMind and I'm there as a co-founder and yeah, in sea level management right now doing it in part-time.",
+    "segments": [
+      {
+        "start": 0.0,
+        "end": 6.96,
+        "text": "Okay, hey, my name is Stefan and I'm part of VibeMind and my tendencies are always"
+      },
+      {
+        "start": 6.96,
+        "end": 10.0,
+        "text": "going building systems and reaching out for new customers."
+      }
+    ],
+    "role": "Sales & Security"
+  },
+  {
+    "name": "Surya",
+    "file": "Surya.mp4",
+    "duration": 24.52,
+    "resolution": [
+      1080,
+      1920
+    ],
+    "fps": 30.1,
+    "has_audio": true,
+    "trim_start": 0.0,
+    "trim_end": 24.52,
+    "trimmed_duration": 24.52,
+    "clip_start": 0.0,
+    "clip_end": 10.0,
+    "transcript": "Hi, I'm Surya. I'm a part of Wipemind since last six months. I'm doing this as a part-time because I'm doing my masters in operational excellence So my role in Wipemind is to do the administration staff documenting the internal records like Playing a coordination point between the technical team to bring them into the Operation else and just aligning them with the what all things happening in the offices. So yeah, that's it",
+    "segments": [
+      {
+        "start": 0.0,
+        "end": 7.92,
+        "text": "Hi, I'm Surya. I'm a part of Wipemind since last six months. I'm doing this as a part-time because I'm doing my masters in operational excellence"
+      },
+      {
+        "start": 8.04,
+        "end": 13.32,
+        "text": "So my role in Wipemind is to do the administration staff documenting the internal records like"
+      },
+      {
+        "start": 13.56,
+        "end": 17.94,
+        "text": "Playing a coordination point between the technical team to bring them into the"
+      },
+      {
+        "start": 18.52,
+        "end": 23.76,
+        "text": "Operation else and just aligning them with the what all things happening in the offices. So yeah, that's it"
+      }
+    ],
+    "role": "Business Administration",
+    "voice_id": "FMCzDC1oZXVnpeXutcVX"
+  },
+  {
+    "name": "Stephane",
+    "file": "Stephane.mp4",
+    "duration": 50.23,
+    "resolution": [
+      480,
+      848
+    ],
+    "fps": 29.97,
+    "has_audio": true,
+    "trim_start": 0.0,
+    "trim_end": 49.4,
+    "trimmed_duration": 49.4,
+    "clip_start": 0.0,
+    "clip_end": 13.0,
+    "transcript": "Hi, my name is Stephane. I am the head of growth of VibeMind. I've been launching AI products for a while. I was an ex-founder and I sold my company just before that. I worked at different companies including Lovable and I scaled it into 75 million ARR. And right now I work for a legal tech company but I also part-time help Felix and the team to scale VibeMind. I'm obsessed with product growth and shipping things very fast. I've been working with Felix on AI agents and the future of AGI. So I'm super looking forward to working with him and bring this product to scale.",
+    "segments": [
+      {
+        "start": 0.0,
+        "end": 5.0,
+        "text": "Hi, my name is Stephane. I am the head of growth of VibeMind. I've been"
+      },
+      {
+        "start": 5.0,
+        "end": 11.0,
+        "text": "launching AI products for a while. I was an ex-founder and I sold my company just"
+      },
+      {
+        "start": 11.0,
+        "end": 15.6,
+        "text": "before that. I worked at different companies including Lovable and I scaled it"
+      },
+      {
+        "start": 15.6,
+        "end": 22.8,
+        "text": "into 75 million ARR. And right now I work for a legal tech company but I also"
+      },
+      {
+        "start": 22.8,
+        "end": 29.8,
+        "text": "part-time help Felix and the team to scale VibeMind. I'm obsessed with"
+      },
+      {
+        "start": 29.8,
+        "end": 36.0,
+        "text": "product growth and shipping things very fast. I've been"
+      },
+      {
+        "start": 36.0,
+        "end": 43.2,
+        "text": "working with Felix on AI agents and the future of AGI. So I'm"
+      },
+      {
+        "start": 43.2,
+        "end": 49.4,
+        "text": "super looking forward to working with him and bring this product to scale."
+      }
+    ],
+    "role": "CEO & Growth",
+    "voice_id": "adcpvAXx35LrNrJCJBtv",
+    "voice_name": "Stephane",
+    "lipsync_params": {
+      "temporal_buffer": 4,
+      "codeformer_fidelity": 0.4,
+      "unsharp_strength": 0.5,
+      "unsharp_sigma": 2.0,
+      "expand_ratio": 0.04,
+      "blur_ratio": 0.05
+    }
+  },
+  {
+    "name": "Felix",
+    "file": "Felix.mp4",
+    "skip_lipsync": true,
+    "duration": 12.42,
+    "resolution": [
+      478,
+      850
+    ],
+    "fps": 30.04,
+    "has_audio": true,
+    "trim_start": 0.0,
+    "trim_end": 12.3,
+    "trimmed_duration": 12.3,
+    "clip_start": 0.0,
+    "clip_end": 12.3,
+    "transcript": "Hello, this is Felix, the CTO of Widemind, and some would say I'm a monster in AI. I would say, \"More to learn.\"",
+    "segments": [
+      {
+        "start": 0.1,
+        "end": 7.7,
+        "text": "Hello, this is Felix, the CTO of Widemind, and some would say I'm a monster in AI."
+      },
+      {
+        "start": 7.7,
+        "end": 12.3,
+        "text": "I would say, \"More to learn.\""
+      }
+    ],
+    "role": "CTO",
+    "voice_id": "t0H3hrOiIC4q3fnS7vvN",
+    "voice_name": "Felix"
+  }
+]
