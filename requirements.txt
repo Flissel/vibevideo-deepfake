@@ -1,0 +1,10 @@
+moviepy>=2.0.0
+elevenlabs>=1.0.0
+python-dotenv>=1.0.0
+Pillow>=10.0.0
+numpy>=1.24.0
+scipy>=1.10.0
+mediapipe>=0.10.0
+rembg>=2.0.0
+dtw-python>=1.4.0
+imageio-ffmpeg>=0.4.0
