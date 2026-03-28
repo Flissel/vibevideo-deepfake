@@ -5,7 +5,7 @@ Uses faster-whisper to get word timestamps from both original video audio
 and TTS audio, matches words via DTW, then adjusts ONLY the silence gaps
 between words (never stretches speech) so timing matches the original.
 
-This preserves 100% of the ElevenLabs voice quality — only pauses change.
+This preserves 100% of the TTS voice quality — only pauses change.
 
 Usage:
   python align_audio.py --original original.mp4 --tts tts.mp3 --output aligned.wav
@@ -127,7 +127,7 @@ def silence_align_segments(tts_audio: np.ndarray, sr: int,
     Args:
         target_duration: if set, trim/pad output to match this duration exactly.
 
-    This preserves 100% of the ElevenLabs voice quality.
+    This preserves 100% of the TTS voice quality.
     """
     if not pairs:
         return tts_audio

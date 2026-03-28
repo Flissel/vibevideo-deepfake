@@ -72,7 +72,7 @@ def cmd_lipsync(args):
 # ============================================================
 
 VOICE_COMMANDS = {
-    "clone":       ("voice/clone_voices.py",       "Clone voices via ElevenLabs"),
+    "clone":       ("voice/clone_voices.py",       "Extract reference audio (Chatterbox)"),
     "tts":         ("voice/generate_tts.py",       "Generate TTS voiceover per person"),
     "transcripts": ("voice/export_transcripts.py", "Export editable transcripts"),
     "quick":       ("voice/clone_and_tts.py",      "Quick clone + TTS from audio"),
