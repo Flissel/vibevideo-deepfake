@@ -1,17 +1,17 @@
 #!/usr/bin/env python3
 """
-deepfake - CLI for VibeMind Lip Sync & Voice Cloning Tools
+deepfake - CLI for VibeMind Lip Sync, Voice Cloning & Face Swap
 
 Usage:
   python deepfake.py lipsync <command>   Lip sync tools
   python deepfake.py voice <command>     Voice cloning & TTS
+  python deepfake.py faceswap <command>  Face-swap (video in -> video out)
 
 Examples:
   python deepfake.py lipsync run --only Surya
-  python deepfake.py lipsync sweep --person Surya
-  python deepfake.py lipsync analyze
   python deepfake.py voice clone
-  python deepfake.py voice tts
+  python deepfake.py faceswap list
+  python deepfake.py faceswap batch input.mp4 --target Diego
 """
 
 import argparse
@@ -97,24 +97,55 @@ def cmd_voice(args):
 
 
 # ============================================================
+# Face Swap Tools
+# ============================================================
+
+FACESWAP_COMMANDS = {
+    # module dotted-name (relative to vibevideo_deepfake/) + description
+    "batch":  ("faceswap.batch",         "Swap faces in a video file (mp4 in -> mp4 out)"),
+    "list":   ("faceswap.list_presets",  "List installed face presets (slug + display name)"),
+}
+
+
+def cmd_faceswap(args):
+    sub = args.sub
+    extra = args.extra
+
+    if sub == "help" or sub not in FACESWAP_COMMANDS:
+        print("\nFace Swap Tools:\n")
+        for name, (_, desc) in FACESWAP_COMMANDS.items():
+            print(f"  {name:10s} {desc}")
+        print(f"\nUsage: python deepfake.py faceswap <command> [args...]")
+        print(f"Example: python deepfake.py faceswap batch input.mp4 --target Diego")
+        return
+
+    module, desc = FACESWAP_COMMANDS[sub]
+    print(f"\n--- {sub}: {desc} ---\n")
+    # Run as module so relative imports inside faceswap/ resolve.
+    cmd = [sys.executable, "-m", module] + (extra or [])
+    result = subprocess.run(cmd, cwd=str(BASE_DIR))
+    sys.exit(result.returncode)
+
+
+# ============================================================
 # CLI
 # ============================================================
 
 def main():
     parser = argparse.ArgumentParser(
         prog="deepfake",
-        description="VibeMind Deepfake Tools - Lip Sync & Voice Cloning (PRIVATE)",
+        description="VibeMind Deepfake Tools - Lip Sync, Voice Cloning & Face Swap (PRIVATE)",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""Workflows:
   lipsync    Lip sync tools and quality analysis
   voice      Voice cloning and TTS generation
+  faceswap   Face-swap (video in -> video out, lands in ~/.rowboat/Videos/)
 
 Examples:
   python deepfake.py lipsync run --only Surya
-  python deepfake.py lipsync sweep --person Surya
-  python deepfake.py lipsync analyze
   python deepfake.py voice clone
-  python deepfake.py voice tts""",
+  python deepfake.py faceswap list
+  python deepfake.py faceswap batch clip.mp4 --target Diego""",
     )
 
     subparsers = parser.add_subparsers(dest="command")
@@ -131,12 +162,20 @@ Examples:
                          help="Command (clone, tts, transcripts, quick)")
     p_voice.add_argument("extra", nargs=argparse.REMAINDER, help="Extra args")
 
+    # faceswap
+    p_faceswap = subparsers.add_parser("faceswap", help="Face swap (video in -> video out)")
+    p_faceswap.add_argument("sub", nargs="?", default="help",
+                            help="Command (batch, list)")
+    p_faceswap.add_argument("extra", nargs=argparse.REMAINDER, help="Extra args")
+
     args = parser.parse_args()
 
     if args.command == "lipsync":
         cmd_lipsync(args)
     elif args.command == "voice":
         cmd_voice(args)
+    elif args.command == "faceswap":
+        cmd_faceswap(args)
     else:
         parser.print_help()
 

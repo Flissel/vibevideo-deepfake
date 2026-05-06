@@ -65,3 +65,7 @@ Desktop.ini
 *.pth
 *.onnx
 *.pt
+
+# === FaceSwap targets (private user photos, large) ===
+faceswap/targets/
+faceswap/__pycache__/
