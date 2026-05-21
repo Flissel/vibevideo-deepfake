@@ -65,7 +65,12 @@ class FaceSwapper:
     skip alignment and push the raw frame through.
     """
 
-    def __init__(self, target_face_path: Path, providers: Optional[List[str]] = None):
+    def __init__(
+        self,
+        target_face_path: Path,
+        providers: Optional[List[str]] = None,
+        restore: bool = True,
+    ):
         self._target_path = Path(target_face_path)
         self._providers = providers or ["CUDAExecutionProvider", "CPUExecutionProvider"]
 
@@ -82,9 +87,23 @@ class FaceSwapper:
         )
 
         self._target_face = self._load_target(self._target_path)
+
+        # Face restoration (GFPGAN) — the inswapper core is 128x128, so
+        # its output is soft/noisy; restoring the swapped face crop is the
+        # biggest visible quality jump. Optional: if the model file is
+        # missing the swapper still works, just without restoration.
+        self._restorer = None
+        if restore:
+            try:
+                from .face_restore import FaceRestorer
+                self._restorer = FaceRestorer()
+            except Exception as e:
+                logger.warning("face restoration disabled: %s", e)
+
         logger.info(
-            "FaceSwapper ready — target=%s providers=%s",
+            "FaceSwapper ready — target=%s restore=%s providers=%s",
             self._target_path.name,
+            self._restorer is not None,
             self._providers,
         )
 
@@ -127,4 +146,14 @@ class FaceSwapper:
             return frame_bgr, None
         src = max(faces, key=lambda f: (f.bbox[2] - f.bbox[0]) * (f.bbox[3] - f.bbox[1]))
         out = self._swapper.get(frame_bgr, src, self._target_face, paste_back=True)
+
+        # Restore the swapped face — re-synthesises skin detail / sharpness
+        # the 128px inswapper core cannot produce. Feather-pasted so the
+        # restored crop has no hard edge against the rest of the frame.
+        if self._restorer is not None:
+            try:
+                out = self._restorer.restore_face_region(out, tuple(src.bbox))
+            except Exception as e:
+                logger.warning("restore failed, using raw swap: %s", e)
+
         return out, src
