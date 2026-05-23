@@ -1,20 +1,24 @@
-"""Face restoration — GFPGAN post-processing for the inswapper output.
+"""Face restoration — re-synthesise skin detail / sharpness after swap.
 
 The inswapper core runs at 128x128; its swapped face is upscaled to
-frame resolution and ends up soft, noisy, low on skin detail. A
-restoration model re-synthesises pores, sharpness and fine texture,
-which is the single biggest visible step toward deepfake-grade output.
+frame resolution and comes out soft, noisy, low on skin detail. A
+restoration model is the single biggest visible step toward deepfake-
+grade output.
 
-GFPGANv1.4 (ONNX, ~340 MB) is the default. It expects a 512x512 face,
-RGB, normalised to [-1, 1], NCHW; it returns the restored face in the
-same layout.
+Three models supported, all benchmarked on an RTX 3060 with a single
+warm 1080p face crop (NOT counting init):
 
-The model file ships with VisoMaster's asset bundle:
-    E:/Vibemind_Tools/VisoMaster/model_assets/GFPGANv1.4.onnx
-Override with FACE_RESTORE_MODEL if it lives elsewhere.
+    GPEN-256        ~73 ms    sharp + detail, lower res          DEFAULT
+    GFPGAN-512     ~190-600ms slightly sharper, ~8x slower       opt-in
+    GPEN-512       ~600 ms    no measurable gain over GFPGAN     skip
 
-Restoration is applied only to the face crop and feather-pasted back,
-so the rest of the frame is untouched and the crop edge has no seam.
+GPEN-256 is the default because it's the only one that fits in a
+realtime budget (~10 fps for swap+restore). GFPGAN-512 is available
+when quality matters more than speed.
+
+Model files come from VisoMaster's asset bundle:
+    E:/Vibemind_Tools/VisoMaster/model_assets/{GPEN-BFR-256,GFPGANv1.4}.onnx
+Override with FACE_RESTORE_MODEL.
 """
 
 from __future__ import annotations
@@ -29,19 +33,47 @@ import numpy as np
 
 logger = logging.getLogger(__name__)
 
-_DEFAULT_MODEL = os.environ.get(
-    "FACE_RESTORE_MODEL",
-    "E:/Vibemind_Tools/VisoMaster/model_assets/GFPGANv1.4.onnx",
-)
+# Available models with their input size. The path can be overridden by
+# FACE_RESTORE_MODEL (file path or one of the keys below).
+_MODELS = {
+    "gpen-256":   ("E:/Vibemind_Tools/VisoMaster/model_assets/GPEN-BFR-256.onnx", 256),
+    "gfpgan-512": ("E:/Vibemind_Tools/VisoMaster/model_assets/GFPGANv1.4.onnx",   512),
+    "gpen-512":   ("E:/Vibemind_Tools/VisoMaster/model_assets/GPEN-BFR-512.onnx", 512),
+}
+_DEFAULT_KEY = "gpen-256"
+
+
+def _resolve_model(spec: Optional[str]) -> tuple[str, int, str]:
+    """Resolve a model spec to (path, size, label).
+
+    spec can be:
+      - None              → env FACE_RESTORE_MODEL, else _DEFAULT_KEY
+      - one of _MODELS    → use that bundled model
+      - a file path       → assume size from filename (256 → 256, else 512)
+    """
+    if spec is None:
+        spec = os.environ.get("FACE_RESTORE_MODEL", _DEFAULT_KEY)
+    key = spec.lower()
+    if key in _MODELS:
+        path, size = _MODELS[key]
+        return path, size, key
+    # treat as a file path
+    if not Path(spec).exists():
+        raise FileNotFoundError(
+            f"face-restore model not found: {spec}. Known keys: {list(_MODELS)} "
+            "or pass a file path. Set FACE_RESTORE_MODEL to override."
+        )
+    size = 256 if "256" in Path(spec).name else 512
+    return spec, size, Path(spec).stem
 
 
 class FaceRestorer:
-    """GFPGAN ONNX wrapper — lazy, GPU-first."""
+    """ONNX face-restorer wrapper — lazy, GPU-first."""
 
     def __init__(self, model_path: Optional[str] = None) -> None:
         import onnxruntime as ort
 
-        path = model_path or _DEFAULT_MODEL
+        path, size, label = _resolve_model(model_path)
         if not Path(path).exists():
             raise FileNotFoundError(
                 f"face-restore model not found: {path}. Set FACE_RESTORE_MODEL "
@@ -50,16 +82,21 @@ class FaceRestorer:
         providers = ["CUDAExecutionProvider", "CPUExecutionProvider"]
         self._sess = ort.InferenceSession(path, providers=providers)
         self._inp = self._sess.get_inputs()[0].name
-        self._size = 512
-        logger.info("FaceRestorer ready — %s", Path(path).name)
+        self._size = size
+        self._label = label
+        logger.info("FaceRestorer ready — %s (size=%d)", label, size)
 
-    def _restore_512(self, face_bgr: np.ndarray) -> np.ndarray:
-        """Run GFPGAN on a face crop; returns same-size restored crop."""
+    @property
+    def label(self) -> str:
+        return self._label
+
+    def _restore(self, face_bgr: np.ndarray) -> np.ndarray:
+        """Run the model on a face crop; returns same-size restored crop."""
         h, w = face_bgr.shape[:2]
         face = cv2.resize(face_bgr, (self._size, self._size))
         rgb = cv2.cvtColor(face, cv2.COLOR_BGR2RGB).astype(np.float32)
-        rgb = (rgb / 255.0 - 0.5) / 0.5            # → [-1, 1]
-        blob = rgb.transpose(2, 0, 1)[None]         # NCHW
+        rgb = (rgb / 255.0 - 0.5) / 0.5            # → [-1, 1] (both models)
+        blob = rgb.transpose(2, 0, 1)[None]
         out = self._sess.run(None, {self._inp: blob})[0][0]
         out = (out.transpose(1, 2, 0) * 0.5 + 0.5) * 255.0
         out = np.clip(out, 0, 255).astype(np.uint8)
@@ -81,14 +118,13 @@ class FaceRestorer:
             blend: 0..1 — how strongly the restored crop replaces the raw
                 one (1.0 = full restore, lower keeps some original texture)
             feather_px: Gaussian-feather radius on the crop edge so the
-                restored region has no hard boundary against the softer
-                surrounding frame.
+                restored region has no hard boundary against the rest of
+                the frame.
 
         Returns a new frame; the input is not modified.
         """
         h, w = frame_bgr.shape[:2]
         x0, y0, x1, y1 = bbox
-        # pad the bbox a bit — GFPGAN works better with some margin
         bw, bh = x1 - x0, y1 - y0
         pad_x, pad_y = bw * 0.25, bh * 0.25
         cx0 = max(0, int(x0 - pad_x))
@@ -99,7 +135,7 @@ class FaceRestorer:
             return frame_bgr
 
         crop = frame_bgr[cy0:cy1, cx0:cx1]
-        restored = self._restore_512(crop)
+        restored = self._restore(crop)
         if blend < 1.0:
             restored = cv2.addWeighted(restored, blend, crop, 1.0 - blend, 0)
 
